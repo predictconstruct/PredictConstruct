@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PredictConstruct - Carga de Datos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>PredictConstruct - Carga de Datos</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="projectName">Nombre del Proyecto:</label>
+            <input type="text" id="projectName" name="projectName" placeholder="Ej. Construcción de Vivienda">
+
+            <label for="deadline">Plazo del Proyecto:</label>
+            <input type="text" id="deadline" name="deadline" placeholder="Ej. 30 días">
+
+            <label for="milestones">Hitos Críticos:</label>
+            <input type="text" id="milestones" name="milestones" placeholder="Ej. Entrega de Materiales, Instalación de Estructuras">
+
+            <label for="file">Subir Cronograma:</label>
+            <input type="file" id="file" name="file" accept=".xls, .xlsx, .csv">
+
+            <button type="submit">Cargar Datos</button>
+        </form>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append("projectName", document.getElementById("projectName").value);
+            formData.append("deadline", document.getElementById("deadline").value);
+            formData.append("milestones", document.getElementById("milestones").value);
+            formData.append("file", document.getElementById("file").files[0]);
+
+            try {
+                const response = await fetch('http://localhost:5000/upload-schedule', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                document.getElementById('message').textContent = result.message;
+            } catch (error) {
+                document.getElementById('message').textContent = "Error al cargar los datos.";
+            }
+        });
+    </script>
+</body>
+</html>
