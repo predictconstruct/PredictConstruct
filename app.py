@@ -1,24 +1,25 @@
 from flask import Flask, request, jsonify
-import pandas as pd
+import os
 
 app = Flask(__name__)
 
+# Ruta para cargar cronograma
 @app.route('/upload-schedule', methods=['POST'])
 def upload_schedule():
-    project_name = request.form['projectName']
-    deadline = request.form['deadline']
-    milestones = request.form['milestones']
-    
-    # Guardar el archivo subido
+    if 'file' not in request.files:
+        return jsonify({'message': 'No file part'}), 400
+
     file = request.files['file']
-    file.save(f"./uploads/{file.filename}")  # Asegúrate de crear la carpeta uploads
 
-    # Procesar el archivo (por ejemplo, un CSV)
-    df = pd.read_csv(f"./uploads/{file.filename}")
-    
-    # Aquí agregarías lógica para analizar el cronograma y usar IA
-    
-    return jsonify({"message": "Datos cargados exitosamente"})
+    if file.filename == '':
+        return jsonify({'message': 'No selected file'}), 400
 
-if __name__ == "__main__":
+    # Guardar el archivo en la carpeta 'uploads'
+    file.save(os.path.join('uploads', file.filename))
+
+    # Aquí es donde agregarías la lógica para procesar el archivo
+
+    return jsonify({'message': 'Archivo cargado con éxito!'}), 200
+
+if __name__ == '__main__':
     app.run(debug=True)
